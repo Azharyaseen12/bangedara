@@ -59,6 +59,7 @@ export default function BlogDetailPage() {
       .then(data => setBlog(data));
   }, [id, token]);
 
+  
   // Fetch comments
   const fetchComments = async () => {
     setLoadingComments(true);
