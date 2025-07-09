@@ -35,6 +35,7 @@ class ContactMessageSerializer(serializers.ModelSerializer):
 
 class ReplySerializer(serializers.ModelSerializer):
     user_username = serializers.CharField(source='user.username', read_only=True)
+    comment = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False)
     class Meta:
         model = Reply
         fields = ['id', 'comment', 'user', 'user_username', 'content', 'created_at']

@@ -69,3 +69,16 @@ class ReplyListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, comment_id=self.kwargs['comment_id'])
+
+    def post(self, request, *args, **kwargs):
+        print('DEBUG REPLY POST DATA:', request.data)
+        print('DEBUG REPLY USER:', request.user)
+        serializer = self.get_serializer(data=request.data)
+        print('DEBUG REPLY SERIALIZER INITIAL DATA:', serializer.initial_data)
+        is_valid = serializer.is_valid()
+        print('DEBUG REPLY SERIALIZER IS_VALID:', is_valid)
+        print('DEBUG REPLY SERIALIZER ERRORS:', serializer.errors)
+        if not is_valid:
+            return Response(serializer.errors, status=400)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=201)
