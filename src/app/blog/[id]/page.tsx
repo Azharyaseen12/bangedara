@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ProtectedRoute from '../../../components/ProtectedRoute';
 import CommentForm from '../../../components/CommentForm';
 import CommentList from '../../../components/CommentList';
+import { fetchWithAuth } from '../../../fetchWithAuth';
 
 interface Blog {
   id: number;
@@ -44,6 +45,7 @@ export default function BlogDetailPage() {
   const params = useParams();
   const id = params?.id as string;
   const { token, user } = useAuth();
+  const auth = useAuth();
   const [blog, setBlog] = useState<Blog | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loadingComments, setLoadingComments] = useState(false);
@@ -52,18 +54,19 @@ export default function BlogDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:8000/api/blogs/${id}/`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
-      .then(res => res.json())
-      .then(data => setBlog(data));
+    async function loadBlog() {
+      const res = await fetchWithAuth(`http://localhost:8000/api/blogs/${id}/`, {}, auth);
+      const data = await res.json();
+      setBlog(data);
+    }
+    loadBlog();
   }, [id, token]);
 
-  
   // Fetch comments
   const fetchComments = async () => {
     setLoadingComments(true);
-    const data = await (await fetch(`http://localhost:8000/api/blogs/${id}/comments/`)).json();
+    const res = await fetchWithAuth(`http://localhost:8000/api/blogs/${id}/comments/`, {}, auth);
+    const data = await res.json();
     setComments(data);
     setLoadingComments(false);
   };
@@ -74,14 +77,11 @@ export default function BlogDetailPage() {
   // Post comment
   const handleComment = async (content: string) => {
     setPostingComment(true);
-    await fetch(`http://localhost:8000/api/blogs/${id}/comments/`, {
+    await fetchWithAuth(`http://localhost:8000/api/blogs/${id}/comments/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
-    });
+    }, auth);
     setPostingComment(false);
     fetchComments();
   };
@@ -89,14 +89,11 @@ export default function BlogDetailPage() {
   // Post reply
   const handleReply = async (commentId: number, content: string) => {
     setPostingReply(true);
-    await fetch(`http://localhost:8000/api/comments/${commentId}/replies/`, {
+    await fetchWithAuth(`http://localhost:8000/api/comments/${commentId}/replies/`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
-    });
+    }, auth);
     setPostingReply(false);
     fetchComments();
   };
@@ -162,7 +159,7 @@ export default function BlogDetailPage() {
           )}
             <div className="flex flex-wrap gap-4 items-center mt-2">
               <Link href="/blog" className="text-emerald-600 hover:underline font-medium text-sm">
-                 Back to Blog
+                􏰀 Back to Blog
               </Link>
           {user?.username === blog.author_username && (
             <>
@@ -198,4 +195,4 @@ export default function BlogDetailPage() {
       </main>
     </ProtectedRoute>
   );
-} 
+}

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import { fetchWithAuth } from '../../fetchWithAuth';
 
 interface Blog {
   id: number;
@@ -15,13 +16,15 @@ interface Blog {
 export default function BlogPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const { token, user } = useAuth();
+  const auth = useAuth();
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/blogs/', {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    })
-      .then(res => res.json())
-      .then(data => setBlogs(data));
+    async function loadBlogs() {
+      const res = await fetchWithAuth('http://localhost:8000/api/blogs/', {}, auth);
+      const data = await res.json();
+      setBlogs(data);
+    }
+    loadBlogs();
   }, [token]);
 
   return (
@@ -41,12 +44,6 @@ export default function BlogPage() {
               <p className="text-gray-700 mb-2 line-clamp-3">{post.content.slice(0, 120)}...</p>
               <div className="text-xs text-gray-500 mb-2">By {post.author_username} on {new Date(post.created_at).toLocaleDateString()}</div>
               <Link href={`/blog/${post.id}`} className="text-emerald-700 hover:underline font-medium">Read more</Link>
-              {user?.username === post.author_username && (
-                <>
-                  <Link href={`/blog/${post.id}/edit`} className="ml-4 text-emerald-500 hover:underline">Edit</Link>
-                  <Link href={`/blog/${post.id}/delete`} className="ml-2 text-red-500 hover:underline">Delete</Link>
-                </>
-              )}
             </div>
           ))}
         </div>
