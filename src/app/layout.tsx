@@ -1,8 +1,10 @@
+"use client";
 import '../app/globals.css';
 import { Geist, Geist_Mono } from "next/font/google";
 import { ToasterProvider } from '../components/Toaster';
 import { AuthProvider } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
+import { usePathname } from 'next/navigation';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,13 +22,16 @@ const geistMono = Geist_Mono({
 // };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ToasterProvider>
           <AuthProvider>
             <Navbar />
-            {children}
+            <div className={`${pathname === '/' ? 'pt-0' : 'pt-16'}`}>
+              {children}
+            </div>
           </AuthProvider>
         </ToasterProvider>
       </body>
