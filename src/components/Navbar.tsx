@@ -3,19 +3,25 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Button from './Button';
 import { useAuth } from '../contexts/AuthContext';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const { token, user, logout } = useAuth();
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (pathname !== '/') {
+      setIsScrolled(true);
+      return;
+    }
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
 
   const navigation = [
     { name: 'Home', href: '/' },
