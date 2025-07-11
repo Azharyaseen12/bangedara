@@ -166,60 +166,62 @@ export default function BlogPage() {
                 )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {blogs.map((post) => (
-                  <article 
-                    key={post.id} 
-                    className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    {/* Blog Card Content */}
-                    <div className="p-8">
-                      {/* Title */}
-                      <h2 className="text-xl md:text-2xl font-serif font-semibold text-gray-900 mb-4 leading-tight group-hover:text-emerald-700 transition-colors">
-                        {post.title}
-                      </h2>
-                      
-                      {/* Content Preview */}
-                      <p className="text-gray-600 text-base leading-relaxed mb-6 line-clamp-3">
-                        {post.content.slice(0, 150)}...
-                      </p>
-                      
-                      {/* Meta Information */}
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                            <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
+              Array.isArray(blogs) ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {blogs.map((post) => (
+                    <article 
+                      key={post.id} 
+                      className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1"
+                    >
+                      {/* Blog Card Content */}
+                      <div className="p-8">
+                        {/* Title */}
+                        <h2 className="text-xl md:text-2xl font-serif font-semibold text-gray-900 mb-4 leading-tight group-hover:text-emerald-700 transition-colors">
+                          {post.title}
+                        </h2>
+                        {/* Content Preview */}
+                        <p className="text-gray-600 text-base leading-relaxed mb-6 line-clamp-3">
+                          {post.content.slice(0, 150)}...
+                        </p>
+                        {/* Meta Information */}
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                              <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                            <span className="text-sm font-medium text-gray-700">{post.author_username}</span>
                           </div>
-                          <span className="text-sm font-medium text-gray-700">{post.author_username}</span>
+                          <time className="text-sm text-gray-500">
+                            {new Date(post.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </time>
                         </div>
-                        <time className="text-sm text-gray-500">
-                          {new Date(post.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </time>
+                        {/* Read More Button */}
+                        <Link 
+                          href={`/blog/${post.id}`}
+                          className="inline-flex items-center text-emerald-600 font-medium hover:text-emerald-700 transition-colors group-hover:translate-x-1 transform duration-200"
+                        >
+                          Read More
+                          <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
                       </div>
-                      
-                      {/* Read More Button */}
-                      <Link 
-                        href={`/blog/${post.id}`}
-                        className="inline-flex items-center text-emerald-600 font-medium hover:text-emerald-700 transition-colors group-hover:translate-x-1 transform duration-200"
-                      >
-                        Read More
-                        <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
-                    </div>
-                    
-                    {/* Decorative Bottom Border */}
-                    <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                  </article>
-                ))}
-              </div>
+                      {/* Decorative Bottom Border */}
+                      <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16 text-red-600 font-semibold">
+                  Failed to load blogs. Please refresh the page or log in again.
+                </div>
+              )
             )}
           </div>
         </div>

@@ -207,17 +207,23 @@ function PublicLandingPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <Card variant="elevated" className="flex flex-col items-center text-center p-8">
-              <img src="/hero1.svg" alt="Team Member 1" className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md object-cover" />
+              <div className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md bg-emerald-100 flex items-center justify-center text-5xl font-bold text-emerald-700">
+                Z
+              </div>
               <h3 className="text-xl font-semibold text-emerald-800 mb-2">Zahid Nawaz</h3>
               <p className="text-gray-600">Founder & Visionary</p>
             </Card>
             <Card variant="elevated" className="flex flex-col items-center text-center p-8">
-              <img src="/team/Azhar.jpg" alt="Team Member 2" className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md object-cover" />
+              <div className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md bg-emerald-100 flex items-center justify-center text-5xl font-bold text-emerald-700">
+                A
+              </div>
               <h3 className="text-xl font-semibold text-emerald-800 mb-2">Azhar Yaseen</h3>
               <p className="text-gray-600">Lead Developer</p>
             </Card>
             <Card variant="elevated" className="flex flex-col items-center text-center p-8">
-              <img src="/team/Kashi.jpg" alt="Team Member 3" className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md object-cover" />
+              <div className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md bg-emerald-100 flex items-center justify-center text-5xl font-bold text-emerald-700">
+                K
+              </div>
               <h3 className="text-xl font-semibold text-emerald-800 mb-2">Kashif Nawaz</h3>
               <p className="text-gray-600">Community Manager</p>
             </Card>
