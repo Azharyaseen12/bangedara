@@ -1,47 +1,5 @@
-# Django and Core Framework
-Django==4.2.23
-djangorestframework==3.16.0
-
-# Authentication and JWT
-djangorestframework-simplejwt==5.5.0
-PyJWT==2.9.0
-
-# CORS Headers for Frontend Integration
-django-cors-headers==4.7.0
-
-# Database (SQLite is included with Django)
-# For production, you might want to add:
-# psycopg2-binary==2.9.9  # For PostgreSQL
-# mysqlclient==2.2.0       # For MySQL
-
-# Development and Debugging
-# python-decouple==3.8     # For environment variables (optional)
-# django-debug-toolbar==4.2.0  # For debugging (optional)
-
-# File Upload and Media Handling
-# Pillow==10.1.0          # For image processing (if needed)
-
-# Production and Deployment
-# gunicorn==21.2.0        # For production server
-# whitenoise==6.6.0       # For static files in production
-
-# Security (for production)
-# django-csp==3.7          # Content Security Policy
-# django-honeypot==1.0.2   # Spam protection
-
-# Testing (optional)
-# pytest==7.4.3
-# pytest-django==4.7.0
-# factory-boy==3.3.0
-
-# Code Quality (optional)
-# black==23.11.0
-# flake8==6.1.0
-# isort==5.12.0 
-
-  from datetime import timedelta
-
-  SIMPLE_JWT = {
-      'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # or longer
-      'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-  } 
+Django
+djangorestframework
+djangorestframework-simplejwt
+PyJWT
+django-cors-headers
