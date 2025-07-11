@@ -30,24 +30,24 @@ const Header: React.FC<HeaderProps> = ({ user, token }) => {
     { name: 'FAQs', href: '/faqs' },
   ];
 
-  const handleComment = async (content: string) => {
-    setPostingComment(true);
-    const res = await fetch(`http://localhost:8000/api/blogs/${id}/comments/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
-      },
-      body: JSON.stringify({ content }),
-    });
-    if (!res.ok) {
-      const error = await res.json();
-      console.error('Comment error:', error);
-      alert('Error posting comment: ' + JSON.stringify(error));
-    }
-    setPostingComment(false);
-    fetchComments();
-  };
+  // const handleComment = async (content: string) => {
+  //   setPostingComment(true);
+  //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/comments/`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: token ? `Bearer ${token}` : '',
+  //     },
+  //     body: JSON.stringify({ content }),
+  //   });
+  //   if (!res.ok) {
+  //     const error = await res.json();
+  //     console.error('Comment error:', error);
+  //     alert('Error posting comment: ' + JSON.stringify(error));
+  //   }
+  //   setPostingComment(false);
+  //   fetchComments();
+  // };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '../../components/Button';
 import ProtectedRoute from '../../components/ProtectedRoute';
@@ -16,13 +15,12 @@ interface Blog {
 
 export default function ProfilePage() {
   const { token, user, logout } = useAuth();
-  const router = useRouter();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user?.username) return;
-    fetch('http://localhost:8000/api/blogs/', {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())

@@ -17,7 +17,7 @@ export default function DeleteBlogPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetch(`http://localhost:8000/api/blogs/${id}/`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then(res => res.json())
@@ -33,7 +33,7 @@ export default function DeleteBlogPage() {
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/blogs/${id}/`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
