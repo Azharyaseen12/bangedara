@@ -217,7 +217,7 @@ function PublicLandingPage() {
               <p className="text-gray-600">Lead Developer</p>
             </Card>
             <Card variant="elevated" className="flex flex-col items-center text-center p-8">
-              <img src="/team/Kashif.jpg" alt="Team Member 3" className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md object-cover" />
+              <img src="/team/Kashi.jpg" alt="Team Member 3" className="w-32 h-32 rounded-full mb-6 border-4 border-emerald-100 shadow-md object-cover" />
               <h3 className="text-xl font-semibold text-emerald-800 mb-2">Kashif Nawaz</h3>
               <p className="text-gray-600">Community Manager</p>
             </Card>

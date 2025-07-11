@@ -80,7 +80,7 @@ export default function BlogPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {blogs.map((post, index) => (
+                {blogs.map((post) => (
                   <article 
                     key={post.id} 
                     className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1"
