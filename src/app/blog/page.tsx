@@ -20,7 +20,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     async function loadBlogs() {
-      const res = await fetchWithAuth('http://localhost:8000/api/blogs/', {}, auth);
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`, {}, auth);
       const data = await res.json();
       setBlogs(data);
     }

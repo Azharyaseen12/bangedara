@@ -60,7 +60,7 @@ export default function NewBlogPage() {
       formData.append('title', form.title);
       formData.append('content', form.content);
       if (pdf) formData.append('pdf', pdf);
-      const res = await fetch('http://localhost:8000/api/blogs/', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

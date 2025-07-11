@@ -116,7 +116,7 @@ function PublicLandingPage() {
 
   useEffect(() => {
     // Fetch featured blogs (limit to 3)
-    fetch('http://localhost:8000/api/blogs/')
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {

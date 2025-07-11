@@ -55,7 +55,7 @@ export default function BlogDetailPage() {
   useEffect(() => {
     if (!id) return;
     async function loadBlog() {
-      const res = await fetchWithAuth(`http://localhost:8000/api/blogs/${id}/`, {}, auth);
+      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`, {}, auth);
       const data = await res.json();
       setBlog(data);
     }
@@ -65,7 +65,7 @@ export default function BlogDetailPage() {
   // Fetch comments
   const fetchComments = async () => {
     setLoadingComments(true);
-    const res = await fetchWithAuth(`http://localhost:8000/api/blogs/${id}/comments/`, {}, auth);
+    const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/comments/`, {}, auth);
     const data = await res.json();
     setComments(data);
     setLoadingComments(false);
@@ -77,7 +77,7 @@ export default function BlogDetailPage() {
   // Post comment
   const handleComment = async (content: string) => {
     setPostingComment(true);
-    await fetchWithAuth(`http://localhost:8000/api/blogs/${id}/comments/`, {
+    await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/comments/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
@@ -89,7 +89,7 @@ export default function BlogDetailPage() {
   // Post reply
   const handleReply = async (commentId: number, content: string) => {
     setPostingReply(true);
-    await fetchWithAuth(`http://localhost:8000/api/comments/${commentId}/replies/`, {
+    await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${commentId}/replies/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
@@ -103,7 +103,7 @@ export default function BlogDetailPage() {
   const pdfUrl = blog.pdf
     ? blog.pdf.startsWith('http')
       ? blog.pdf
-      : `http://localhost:8000${blog.pdf}`
+      : `${process.env.NEXT_PUBLIC_API_BASE_URL}${blog.pdf}`
     : null;
 
   return (

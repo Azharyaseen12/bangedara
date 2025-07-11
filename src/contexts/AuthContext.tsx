@@ -50,16 +50,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Helper: refresh access token
   const refreshToken = async () => {
     if (!refresh) return logout();
-    const res = await fetch('http://localhost:8000/api/token/refresh/', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/token/refresh/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refresh }),
     });
-    if (!res.ok) {
+    if (!response.ok) {
       logout();
       return;
     }
-    const data = await res.json();
+    const data = await response.json();
     setToken(data.access);
     if (typeof window !== 'undefined') {
       localStorage.setItem('token', data.access);
@@ -67,13 +67,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = async (username: string, password: string) => {
-    const res = await fetch('http://localhost:8000/api/token/', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/token/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
-    if (!res.ok) throw new Error('Login failed');
-    const data = await res.json();
+    if (!response.ok) throw new Error('Login failed');
+    const data = await response.json();
     setToken(data.access);
     setRefresh(data.refresh);
     setUser({ username });
@@ -86,12 +86,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const register = async (data: RegisterData) => {
-    const res = await fetch('http://localhost:8000/api/register/', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/register/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Registration failed');
+    if (!response.ok) throw new Error('Registration failed');
     await login(data.username, data.password);
   };
 
