@@ -13,6 +13,7 @@ export default function NewBlogPage() {
   const [pdf, setPdf] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [dragActive, setDragActive] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,6 +23,32 @@ export default function NewBlogPage() {
     if (e.target.files && e.target.files[0]) {
       setPdf(e.target.files[0]);
       setFileName(e.target.files[0].name);
+    }
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+  const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type === 'application/pdf') {
+        setPdf(file);
+        setFileName(file.name);
+      } else {
+        showToast('Please upload a PDF file.', 'error');
+      }
     }
   };
 
@@ -115,7 +142,10 @@ export default function NewBlogPage() {
                 />
                 <label 
                   htmlFor="pdf" 
-                  className="flex items-center justify-center w-full min-h-[72px] py-4 border-2 border-dashed border-emerald-300 rounded-xl cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition-all duration-200 group"
+                  className={`flex items-center justify-center w-full min-h-[72px] py-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 group ${dragActive ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-300 hover:border-emerald-400 hover:bg-emerald-50'}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
                 >
                   <div className="flex flex-col items-center justify-center w-full">
                     {fileName ? (
