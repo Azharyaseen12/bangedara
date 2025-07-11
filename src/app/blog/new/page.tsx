@@ -79,22 +79,22 @@ export default function NewBlogPage() {
 
   return (
     <ProtectedRoute>
-      <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100 flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl mx-auto">
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 animate-fade-in-up border border-emerald-100">
-            {/* Header Section */}
-            <div className="text-center mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-emerald-800 mb-3 font-serif">
-                Post a New Blog
-              </h1>
-              <p className="text-emerald-600 text-sm md:text-base">
-                Share your thoughts and insights with our community
-              </p>
-            </div>
+      <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-emerald-800 mb-4 font-serif">
+              Share Your Story
+            </h1>
+            <p className="text-emerald-600 text-lg md:text-xl max-w-2xl mx-auto">
+              Create a new blog post and share your insights with our community
+            </p>
+          </div>
 
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Title Field */}
-            <div className="mb-6">
-              <label htmlFor="title" className="block text-sm font-semibold text-emerald-700 mb-2">
+            <div className="space-y-3">
+              <label htmlFor="title" className="block text-lg font-semibold text-emerald-800">
                 Blog Title
               </label>
               <input 
@@ -102,34 +102,34 @@ export default function NewBlogPage() {
                 name="title" 
                 type="text" 
                 required 
-                placeholder="Enter your blog title..."
-                className="w-full px-4 py-3 border-2 border-emerald-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md" 
+                placeholder="Enter a compelling title for your blog..."
+                className="w-full px-6 py-4 text-lg border-2 border-emerald-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md" 
                 value={form.title} 
                 onChange={handleChange} 
               />
             </div>
 
             {/* Content Field */}
-            <div className="mb-6">
-              <label htmlFor="content" className="block text-sm font-semibold text-emerald-700 mb-2">
+            <div className="space-y-3">
+              <label htmlFor="content" className="block text-lg font-semibold text-emerald-800">
                 Blog Content
               </label>
               <textarea 
                 id="content" 
                 name="content" 
                 required 
-                rows={10}
-                placeholder="Write your blog content here..."
-                className="w-full px-4 py-3 border-2 border-emerald-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-white shadow-sm hover:shadow-md resize-vertical" 
+                rows={12}
+                placeholder="Write your blog content here. Share your thoughts, experiences, and insights..."
+                className="w-full px-6 py-4 text-lg border-2 border-emerald-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md resize-vertical leading-relaxed" 
                 value={form.content} 
                 onChange={handleChange} 
               />
             </div>
 
             {/* File Upload Section */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-emerald-700 mb-3">
-                Attach PDF (Optional)
+            <div className="space-y-3">
+              <label className="block text-lg font-semibold text-emerald-800">
+                Attach PDF Document (Optional)
               </label>
               <div className="relative">
                 <input 
@@ -142,27 +142,27 @@ export default function NewBlogPage() {
                 />
                 <label 
                   htmlFor="pdf" 
-                  className={`flex items-center justify-center w-full min-h-[72px] py-4 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 group ${dragActive ? 'border-emerald-500 bg-emerald-50' : 'border-emerald-300 hover:border-emerald-400 hover:bg-emerald-50'}`}
+                  className={`flex items-center justify-center w-full min-h-[100px] py-6 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-300 group ${dragActive ? 'border-emerald-500 bg-emerald-50/80 ring-4 ring-emerald-500/20' : 'border-emerald-300 hover:border-emerald-400 hover:bg-emerald-50/50'}`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                 >
                   <div className="flex flex-col items-center justify-center w-full">
                     {fileName ? (
-                      <div className="text-emerald-700">
-                        <svg className="w-5 h-5 mx-auto mb-1 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="text-emerald-700 text-center">
+                        <svg className="w-8 h-8 mx-auto mb-3 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        <p className="text-sm font-medium">{fileName}</p>
-                        <p className="text-xs text-emerald-500">Click to change file</p>
+                        <p className="text-lg font-medium">{fileName}</p>
+                        <p className="text-sm text-emerald-500 mt-1">Click to change file</p>
                       </div>
                     ) : (
                       <div className="text-emerald-600 group-hover:text-emerald-700 flex flex-col items-center">
-                        <svg className="w-7 h-7 mb-1 text-emerald-500 group-hover:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-10 h-10 mb-3 text-emerald-500 group-hover:text-emerald-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
-                        <p className="text-sm font-medium">Click to upload PDF</p>
-                        <p className="text-xs text-emerald-500">or drag and drop</p>
+                        <p className="text-lg font-medium">Click to upload PDF</p>
+                        <p className="text-sm text-emerald-500 mt-1">or drag and drop your file here</p>
                       </div>
                     )}
                   </div>
@@ -171,37 +171,42 @@ export default function NewBlogPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-8">
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="group relative px-12 py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold text-lg rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none overflow-hidden"
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 {loading ? (
-                  <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <div className="flex items-center justify-center relative z-10">
+                    <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Publishing...
+                    Publishing Your Blog...
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center">
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-center justify-center relative z-10">
+                    <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
-                    Publish Blog
+                    Publish Blog Post
                   </div>
                 )}
               </button>
             </div>
 
-            {/* Success/Error Message Placeholder */}
+            {/* Loading Message */}
             {loading && (
-              <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                <p className="text-sm text-emerald-700 text-center">
-                  Your blog is being published...
-                </p>
+              <div className="text-center py-6">
+                <div className="inline-flex items-center px-6 py-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span className="text-emerald-700 font-medium">Your blog is being published...</span>
+                </div>
               </div>
             )}
           </form>
