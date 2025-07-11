@@ -24,12 +24,13 @@ interface RegisterData {
   last_name?: string;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType & { authLoading: boolean } | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [refresh, setRefresh] = useState<string | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,10 +39,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedRefresh = localStorage.getItem('refresh');
       const storedUsername = localStorage.getItem('username');
       if (storedToken && storedRefresh && storedUsername) {
-      setToken(storedToken);
+        setToken(storedToken);
         setRefresh(storedRefresh);
-      setUser({ username: storedUsername });
+        setUser({ username: storedUsername });
       }
+      setAuthLoading(false);
     }
   }, []);
 
@@ -106,7 +108,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, refreshToken }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, refreshToken, authLoading }}>
       {children}
     </AuthContext.Provider>
   );
