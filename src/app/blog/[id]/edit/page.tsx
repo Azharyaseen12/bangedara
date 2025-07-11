@@ -42,13 +42,17 @@ export default function EditBlogPage() {
     e.preventDefault();
     setLoading(true);
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`, {
+      const formData = new FormData();
+      formData.append('title', form.title);
+      formData.append('content', form.content);
+      // If you add PDF editing in the future, append it here
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          // Do NOT set 'Content-Type' header for FormData
         },
-        body: JSON.stringify(form),
+        body: formData,
       });
       if (!res.ok) throw new Error('Failed to update blog');
       showToast('Blog updated!', 'success');
