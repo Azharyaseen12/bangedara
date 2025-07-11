@@ -35,6 +35,13 @@ class BlogViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+    
+    def get_queryset(self):
+        queryset = Blog.objects.all().order_by('-created_at')
+        search_query = self.request.query_params.get('search', None)
+        if search_query:
+            queryset = queryset.filter(title__icontains=search_query)
+        return queryset
 
 class ContactMessageCreateView(generics.CreateAPIView):
     queryset = ContactMessage.objects.all()
