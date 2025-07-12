@@ -23,10 +23,12 @@ class RegisterSerializer(serializers.ModelSerializer):
 class BlogSerializer(serializers.ModelSerializer):
     author_username = serializers.CharField(source='author.username', read_only=True)
     pdf = serializers.FileField(required=False, allow_null=True)
+    content = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    
     class Meta:
         model = Blog
-        fields = ['id', 'title', 'content', 'author', 'author_username', 'pdf', 'created_at', 'updated_at']
-        read_only_fields = ['author', 'author_username', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'content', 'language', 'author', 'author_username', 'pdf', 'created_at', 'updated_at']
+        read_only_fields = ['author', 'author_username', 'language', 'created_at', 'updated_at']
 
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:

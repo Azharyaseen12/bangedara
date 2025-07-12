@@ -39,8 +39,14 @@ class BlogViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Blog.objects.all().order_by('-created_at')
         search_query = self.request.query_params.get('search', None)
+        language_filter = self.request.query_params.get('language', None)
+        
         if search_query:
             queryset = queryset.filter(title__icontains=search_query)
+        
+        if language_filter:
+            queryset = queryset.filter(language=language_filter)
+            
         return queryset
 
 class ContactMessageCreateView(generics.CreateAPIView):
