@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import RegisterView, ContactMessageCreateView, CommentListCreateView, ReplyListCreateView
+from .views import RegisterView, ContactMessageCreateView, CommentListCreateView, ReplyListCreateView, UserProfileView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from .views import BlogViewSet
@@ -14,5 +14,6 @@ urlpatterns = [
     path('contact/', ContactMessageCreateView.as_view(), name='contact'),
     path('blogs/<int:blog_id>/comments/', CommentListCreateView.as_view(), name='blog-comments'),
     path('comments/<int:comment_id>/replies/', ReplyListCreateView.as_view(), name='comment-replies'),
+    path('profile/', UserProfileView.as_view(), name='user-profile'),
     path('', include(router.urls)),
 ] 

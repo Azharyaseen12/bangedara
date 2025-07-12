@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import generics, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer, BlogSerializer, ContactMessageSerializer, CommentSerializer, ReplySerializer
+from .serializers import RegisterSerializer, BlogSerializer, ContactMessageSerializer, CommentSerializer, ReplySerializer, UserProfileSerializer
 from django.contrib.auth.models import User
 from .models import Blog, ContactMessage, Comment, Reply
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -20,6 +20,13 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
