@@ -5,6 +5,13 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useToaster } from '../../../components/Toaster';
 import ProtectedRoute from '../../../components/ProtectedRoute';
 
+// Function to detect if text contains Urdu characters
+const detectLanguage = (text: string): 'ltr' | 'rtl' => {
+  if (!text) return 'ltr';
+  const urduPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+  return urduPattern.test(text) ? 'rtl' : 'ltr';
+};
+
 export default function NewBlogPage() {
   const { token } = useAuth();
   const { showToast } = useToaster();
@@ -16,7 +23,8 @@ export default function NewBlogPage() {
   const [dragActive, setDragActive] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +66,9 @@ export default function NewBlogPage() {
     try {
       const formData = new FormData();
       formData.append('title', form.title);
-      formData.append('content', form.content);
+      if (form.content.trim()) {
+        formData.append('content', form.content);
+      }
       if (pdf) formData.append('pdf', pdf);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`, {
         method: 'POST',
@@ -76,6 +86,9 @@ export default function NewBlogPage() {
       setLoading(false);
     }
   };
+
+  const titleDirection = detectLanguage(form.title);
+  const contentDirection = detectLanguage(form.content);
 
   return (
     <ProtectedRoute>
@@ -105,24 +118,27 @@ export default function NewBlogPage() {
                 placeholder="Enter a compelling title for your blog..."
                 className="w-full px-6 py-4 text-lg border-2 border-emerald-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md" 
                 value={form.title} 
-                onChange={handleChange} 
+                onChange={handleChange}
+                dir={titleDirection}
+                style={{ textAlign: titleDirection === 'rtl' ? 'right' : 'left' }}
               />
             </div>
 
             {/* Content Field */}
             <div className="space-y-3">
               <label htmlFor="content" className="block text-lg font-semibold text-emerald-800">
-                Blog Content
+                Blog Content (Optional)
               </label>
               <textarea 
                 id="content" 
                 name="content" 
-                required 
                 rows={12}
                 placeholder="Write your blog content here. Share your thoughts, experiences, and insights..."
                 className="w-full px-6 py-4 text-lg border-2 border-emerald-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md resize-vertical leading-relaxed" 
                 value={form.content} 
-                onChange={handleChange} 
+                onChange={handleChange}
+                dir={contentDirection}
+                style={{ textAlign: contentDirection === 'rtl' ? 'right' : 'left' }}
               />
             </div>
 

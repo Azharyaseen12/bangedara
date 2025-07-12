@@ -9,23 +9,43 @@ interface Blog {
   id: number;
   title: string;
   content: string;
+  language: string;
   author_username: string;
   created_at: string;
 }
 
+// Function to detect if text contains Urdu characters
+const detectLanguage = (text: string): 'ltr' | 'rtl' => {
+  if (!text) return 'ltr';
+  const urduPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+  return urduPattern.test(text) ? 'rtl' : 'ltr';
+};
+
 export default function BlogPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('all');
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuth();
   const auth = useAuth();
 
-  const loadBlogs = async (search = '') => {
+  const loadBlogs = async (search = '', language = 'all') => {
     setIsLoading(true);
     try {
-      const url = search 
-        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/?search=${encodeURIComponent(search)}`
-        : `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`;
+      let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/`;
+      const params = new URLSearchParams();
+      
+      if (search) {
+        params.append('search', search);
+      }
+      if (language !== 'all') {
+        params.append('language', language);
+      }
+      
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+      
       const res = await fetchWithAuth(url, {}, auth);
       const data = await res.json();
       setBlogs(data);
@@ -43,22 +63,29 @@ export default function BlogPage() {
       return (query: string) => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
-          loadBlogs(query);
+          loadBlogs(query, selectedLanguage);
         }, 300); // 300ms delay
       };
     })(),
-    [auth]
+    [auth, selectedLanguage]
   );
 
   useEffect(() => {
-    loadBlogs();
-  }, [token]);
+    loadBlogs(searchQuery, selectedLanguage);
+  }, [token, selectedLanguage]);
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
     debouncedSearch(value);
+  };
+
+  // Handle language filter change
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedLanguage(value);
+    loadBlogs(searchQuery, value);
   };
 
   return (
@@ -91,7 +118,7 @@ export default function BlogPage() {
           </div>
         </div>
 
-        {/* Search Section */}
+        {/* Search and Filter Section */}
         <div className="py-8 px-4 bg-white">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -115,12 +142,28 @@ export default function BlogPage() {
                   </div>
                 )}
               </div>
-              {searchQuery && (
+              
+              {/* Language Filter */}
+              <div className="sm:w-48">
+                <select
+                  value={selectedLanguage}
+                  onChange={handleLanguageChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors"
+                >
+                  <option value="all">All Languages</option>
+                  <option value="en">English</option>
+                  <option value="ur">Urdu</option>
+                  <option value="mixed">Mixed</option>
+                </select>
+              </div>
+              
+              {(searchQuery || selectedLanguage !== 'all') && (
                 <button
                   type="button"
                   onClick={() => {
                     setSearchQuery('');
-                    loadBlogs();
+                    setSelectedLanguage('all');
+                    loadBlogs('', 'all');
                   }}
                   className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
                 >
@@ -137,7 +180,7 @@ export default function BlogPage() {
             {blogs.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  {searchQuery ? (
+                  {searchQuery || selectedLanguage !== 'all' ? (
                     <svg className="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -148,15 +191,15 @@ export default function BlogPage() {
                   )}
                 </div>
                 <h3 className="text-2xl font-semibold text-gray-700 mb-2">
-                  {searchQuery ? 'No Results Found' : 'No Posts Yet'}
+                  {searchQuery || selectedLanguage !== 'all' ? 'No Results Found' : 'No Posts Yet'}
                 </h3>
                 <p className="text-gray-500 mb-6">
-                  {searchQuery 
-                    ? `No blogs found matching "${searchQuery}". Try a different search term.`
+                  {searchQuery || selectedLanguage !== 'all'
+                    ? `No blogs found matching your criteria. Try adjusting your search or filters.`
                     : 'Be the first to share knowledge with the community'
                   }
                 </p>
-                {token && !searchQuery && (
+                {token && !searchQuery && selectedLanguage === 'all' && (
                   <Link 
                     href="/blog/new" 
                     className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
@@ -168,54 +211,88 @@ export default function BlogPage() {
             ) : (
               Array.isArray(blogs) ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {blogs.map((post) => (
-                    <article 
-                      key={post.id} 
-                      className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1"
-                    >
-                      {/* Blog Card Content */}
-                      <div className="p-8">
-                        {/* Title */}
-                        <h2 className="text-xl md:text-2xl font-serif font-semibold text-gray-900 mb-4 leading-tight group-hover:text-emerald-700 transition-colors">
-                          {post.title}
-                        </h2>
-                        {/* Content Preview */}
-                        <p className="text-gray-600 text-base leading-relaxed mb-6 line-clamp-3">
-                          {post.content.slice(0, 150)}...
-                        </p>
-                        {/* Meta Information */}
-                        <div className="flex items-center justify-between mb-6">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                              <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                              </svg>
-                            </div>
-                            <span className="text-sm font-medium text-gray-700">{post.author_username}</span>
+                  {blogs.map((post) => {
+                    const titleDirection = detectLanguage(post.title);
+                    const contentDirection = detectLanguage(post.content);
+                    
+                    return (
+                      <article 
+                        key={post.id} 
+                        className="group bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 transform hover:-translate-y-1"
+                      >
+                        {/* Blog Card Content */}
+                        <div className="p-8">
+                          {/* Language Badge */}
+                          <div className="mb-3">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              post.language === 'en' ? 'bg-blue-100 text-blue-800' :
+                              post.language === 'ur' ? 'bg-green-100 text-green-800' :
+                              'bg-purple-100 text-purple-800'
+                            }`}>
+                              {post.language === 'en' ? 'English' : 
+                               post.language === 'ur' ? 'Urdu' : 'Mixed'}
+                            </span>
                           </div>
-                          <time className="text-sm text-gray-500">
-                            {new Date(post.created_at).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </time>
+                          
+                          {/* Title */}
+                          <h2 
+                            className="text-xl md:text-2xl font-serif font-semibold text-gray-900 mb-4 leading-tight group-hover:text-emerald-700 transition-colors"
+                            dir={titleDirection}
+                            style={{ textAlign: titleDirection === 'rtl' ? 'right' : 'left' }}
+                          >
+                            {post.title}
+                          </h2>
+                          
+                          {/* Content Preview */}
+                          {post.content ? (
+                            <p 
+                              className="text-gray-600 text-base leading-relaxed mb-6 line-clamp-3"
+                              dir={contentDirection}
+                              style={{ textAlign: contentDirection === 'rtl' ? 'right' : 'left' }}
+                            >
+                              {post.content.slice(0, 150)}...
+                            </p>
+                          ) : (
+                            <p className="text-gray-500 text-base leading-relaxed mb-6 italic">
+                              No content preview available
+                            </p>
+                          )}
+                          
+                          {/* Meta Information */}
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                                <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                              </div>
+                              <span className="text-sm font-medium text-gray-700">{post.author_username}</span>
+                            </div>
+                            <time className="text-sm text-gray-500">
+                              {new Date(post.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
+                            </time>
+                          </div>
+                          
+                          {/* Read More Button */}
+                          <Link 
+                            href={`/blog/${post.id}`}
+                            className="inline-flex items-center text-emerald-600 font-medium hover:text-emerald-700 transition-colors group-hover:translate-x-1 transform duration-200"
+                          >
+                            Read More
+                            <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
                         </div>
-                        {/* Read More Button */}
-                        <Link 
-                          href={`/blog/${post.id}`}
-                          className="inline-flex items-center text-emerald-600 font-medium hover:text-emerald-700 transition-colors group-hover:translate-x-1 transform duration-200"
-                        >
-                          Read More
-                          <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                      {/* Decorative Bottom Border */}
-                      <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                    </article>
-                  ))}
+                        {/* Decorative Bottom Border */}
+                        <div className="h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                      </article>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-16 text-red-600 font-semibold">

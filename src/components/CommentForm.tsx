@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import Button from './Button';
 
+// Function to detect if text contains Urdu characters
+const detectLanguage = (text: string): 'ltr' | 'rtl' => {
+  if (!text) return 'ltr';
+  const urduPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+  return urduPattern.test(text) ? 'rtl' : 'ltr';
+};
+
 export default function CommentForm({ onSubmit, loading }: { onSubmit: (content: string) => void, loading: boolean }) {
   const [content, setContent] = useState('');
+  const contentDirection = detectLanguage(content);
+  
   return (
     <form
       onSubmit={e => {
@@ -23,6 +32,8 @@ export default function CommentForm({ onSubmit, loading }: { onSubmit: (content:
           onChange={e => setContent(e.target.value)}
           required
           disabled={loading}
+          dir={contentDirection}
+          style={{ textAlign: contentDirection === 'rtl' ? 'right' : 'left' }}
         />
         <Button type="submit" loading={loading} size="md" className="px-5 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-md btn-hover">
           Send
