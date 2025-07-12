@@ -52,17 +52,15 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {token && user && (
-              <Link
-                key="Blog"
-                href="/blog"
-                className={`font-medium transition-colors duration-200 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500
-                  ${isScrolled ? 'text-emerald-700 hover:text-white hover:bg-emerald-600' : 'text-white hover:text-emerald-200'}
-                `}
-              >
-                Blog
-              </Link>
-            )}
+            <Link
+              key="Blog"
+              href="/blog"
+              className={`font-medium transition-colors duration-200 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500
+                ${isScrolled ? 'text-emerald-700 hover:text-white hover:bg-emerald-600' : 'text-white hover:text-emerald-200'}
+              `}
+            >
+              Blog
+            </Link>
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -134,16 +132,14 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white rounded-lg shadow-lg mt-2">
-              {token && user && (
-                <Link
-                  key="Blog"
-                  href="/blog"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-emerald-700 hover:text-white hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Blog
-                </Link>
-              )}
+              <Link
+                key="Blog"
+                href="/blog"
+                className="block px-3 py-2 rounded-md text-base font-medium text-emerald-700 hover:text-white hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
               {navigation.map((item) => (
                 <Link
                   key={item.name}

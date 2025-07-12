@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
 import Link from 'next/link';
-import ProtectedRoute from '../../../components/ProtectedRoute';
 import CommentForm from '../../../components/CommentForm';
 import CommentList from '../../../components/CommentList';
 import { fetchWithAuth } from '../../../fetchWithAuth';
@@ -63,17 +62,17 @@ export default function BlogDetailPage() {
   useEffect(() => {
     if (!id) return;
     async function loadBlog() {
-      const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`, {}, auth);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/`);
       const data = await res.json();
       setBlog(data);
     }
     loadBlog();
-  }, [id, token]);
+  }, [id]);
 
   // Fetch comments
   const fetchComments = async () => {
     setLoadingComments(true);
-    const res = await fetchWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/comments/`, {}, auth);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${id}/comments/`);
     const data = await res.json();
     setComments(data);
     setLoadingComments(false);
@@ -118,8 +117,7 @@ export default function BlogDetailPage() {
   const contentDirection = detectLanguage(blog.content);
 
   return (
-    <ProtectedRoute>
-      <main className="min-h-screen bg-gradient-to-br from-emerald-50 to-emerald-100 px-2 py-8">
+    <main className="min-h-screen bg-gradient-to-br from-emerald-50 to-emerald-100 px-2 py-8">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Blog Post Section */}
           <article className="pt-8 pb-6 border-b border-gray-200">
@@ -234,6 +232,5 @@ export default function BlogDetailPage() {
           </section>
         </div>
       </main>
-    </ProtectedRoute>
-  );
+    );
 }

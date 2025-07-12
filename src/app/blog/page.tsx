@@ -2,8 +2,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
-import ProtectedRoute from '../../components/ProtectedRoute';
-import { fetchWithAuth } from '../../fetchWithAuth';
+
 
 interface Blog {
   id: number;
@@ -46,7 +45,8 @@ export default function BlogPage() {
         url += `?${params.toString()}`;
       }
       
-      const res = await fetchWithAuth(url, {}, auth);
+      // Use regular fetch for public access
+      const res = await fetch(url);
       const data = await res.json();
       setBlogs(data);
     } catch (error) {
@@ -89,8 +89,7 @@ export default function BlogPage() {
   };
 
   return (
-    <ProtectedRoute>
-      <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+    <main className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
         {/* Header Section with Enhanced Design */}
         <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 py-16 px-4">
           <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -104,7 +103,7 @@ export default function BlogPage() {
                 Reflections, knowledge, and inspiration for the Ummah
               </p>
             </div>
-            {token && (
+            {token ? (
               <Link 
                 href="/blog/new" 
                 className="inline-flex items-center px-8 py-3 bg-white text-emerald-700 font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-emerald-200"
@@ -113,6 +112,16 @@ export default function BlogPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 Post a Blog
+              </Link>
+            ) : (
+              <Link 
+                href="/login" 
+                className="inline-flex items-center px-8 py-3 bg-white text-emerald-700 font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-transparent hover:border-emerald-200"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v-1H7v-1H5v-1H3v-1h2v-1h2v-1h2v-1h2.257A6 6 0 0121 9z" />
+                </svg>
+                Login to Post
               </Link>
             )}
           </div>
@@ -199,13 +208,22 @@ export default function BlogPage() {
                     : 'Be the first to share knowledge with the community'
                   }
                 </p>
-                {token && !searchQuery && selectedLanguage === 'all' && (
-                  <Link 
-                    href="/blog/new" 
-                    className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
-                  >
-                    Create First Post
-                  </Link>
+                {!searchQuery && selectedLanguage === 'all' && (
+                  token ? (
+                    <Link 
+                      href="/blog/new" 
+                      className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      Create First Post
+                    </Link>
+                  ) : (
+                    <Link 
+                      href="/login" 
+                      className="inline-flex items-center px-6 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      Login to Create First Post
+                    </Link>
+                  )
                 )}
               </div>
             ) : (
@@ -303,6 +321,5 @@ export default function BlogPage() {
           </div>
         </div>
       </main>
-    </ProtectedRoute>
-  );
+    );
 } 
