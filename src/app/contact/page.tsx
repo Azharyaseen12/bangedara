@@ -69,7 +69,7 @@ export default function ContactPage() {
                     <div>
                       <p className="text-sm text-emerald-200">Phone</p>
                       <a href="tel:+1234567890" className="text-lg font-semibold hover:text-emerald-100 transition-colors">
-                        +1 234 567 890
+                        +92 304 4216292
                       </a>
                     </div>
                   </div>
@@ -83,7 +83,7 @@ export default function ContactPage() {
                     <div>
                       <p className="text-sm text-emerald-200">Email</p>
                       <a href="mailto:info@bangedara.com" className="text-lg font-semibold hover:text-emerald-100 transition-colors">
-                        info@bangedara.com
+                        zahidnawaz6292@gmail.com
                       </a>
                     </div>
                   </div>
