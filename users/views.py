@@ -37,7 +37,7 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 class BlogViewSet(viewsets.ModelViewSet):
     queryset = Blog.objects.all().order_by('-created_at')
     serializer_class = BlogSerializer
-    permission_classes = [IsAuthenticated, IsAuthorOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
