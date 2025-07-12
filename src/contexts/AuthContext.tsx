@@ -13,15 +13,14 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>;
   logout: () => void;
   refreshToken: () => Promise<void>;
+  updateProfile: (username: string) => Promise<void>;
 }
 
 interface RegisterData {
   username: string;
+  email: string;
   password: string;
   password2: string;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
 }
 
 const AuthContext = createContext<AuthContextType & { authLoading: boolean } | undefined>(undefined);
@@ -95,6 +94,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await login(data.username, data.password);
   };
 
+  const updateProfile = async (newUsername: string) => {
+    if (!token) throw new Error('Not authenticated');
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/profile/`, {
+      method: 'PATCH',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ username: newUsername }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.username?.[0] || 'Failed to update profile');
+    }
+    
+    const data = await response.json();
+    setUser({ username: data.username });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('username', data.username);
+    }
+  };
+
   const logout = () => {
     setToken(null);
     setRefresh(null);
@@ -108,16 +131,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, refreshToken, authLoading }}>
+    <AuthContext.Provider value={{ user, token, login, register, logout, refreshToken, updateProfile, authLoading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export { AuthContext };
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 }; 

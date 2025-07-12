@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Link from 'next/link';
 import Button from '../../components/Button';
 import ProtectedRoute from '../../components/ProtectedRoute';
+import { useToaster } from '../../components/Toaster';
 
 interface Blog {
   id: number;
@@ -14,10 +15,14 @@ interface Blog {
 }
 
 export default function ProfilePage() {
-  const { token, user, logout } = useAuth();
+  const { token, user, logout, updateProfile } = useAuth();
+  const { showToast } = useToaster();
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest');
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [updatingUsername, setUpdatingUsername] = useState(false);
 
   useEffect(() => {
     if (!user?.username) return;
@@ -30,6 +35,26 @@ export default function ProfilePage() {
         setLoading(false);
       });
   }, [token, user]);
+
+  const handleUsernameUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim() || newUsername === user?.username) {
+      setIsEditingUsername(false);
+      return;
+    }
+
+    setUpdatingUsername(true);
+    try {
+      await updateProfile(newUsername);
+      showToast('Username updated successfully!', 'success');
+      setIsEditingUsername(false);
+      setNewUsername('');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Failed to update username', 'error');
+    } finally {
+      setUpdatingUsername(false);
+    }
+  };
 
   const sortedBlogs = [...blogs].sort((a, b) => {
     const dateA = new Date(a.created_at).getTime();
@@ -60,14 +85,24 @@ export default function ProfilePage() {
                     <h1 className="text-3xl font-bold text-emerald-800 mb-2">
                       Welcome, {user?.username || 'User'}
                     </h1>
-                                         <p className="text-emerald-600 font-medium">
-                       You&apos;ve posted {blogs.length} blog{blogs.length !== 1 ? 's' : ''}
-                     </p>
+                    <p className="text-emerald-600 font-medium">
+                      You&apos;ve posted {blogs.length} blog{blogs.length !== 1 ? 's' : ''}
+                    </p>
                   </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3">
+                  <Button 
+                    type="button"
+                    onClick={() => {
+                      setIsEditingUsername(true);
+                      setNewUsername(user?.username || '');
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    Edit Username
+                  </Button>
                   <Link 
                     href="/blog/new" 
                     className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
@@ -88,6 +123,53 @@ export default function ProfilePage() {
               </div>
             </div>
           </header>
+
+          {/* Username Edit Modal */}
+          {isEditingUsername && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Update Username</h2>
+                <form onSubmit={handleUsernameUpdate} className="space-y-4">
+                  <div>
+                    <label htmlFor="newUsername" className="block text-sm font-medium text-gray-700 mb-2">
+                      New Username
+                    </label>
+                    <input
+                      type="text"
+                      id="newUsername"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors"
+                      placeholder="Enter new username"
+                      required
+                      minLength={3}
+                      disabled={updatingUsername}
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      type="submit"
+                      loading={updatingUsername}
+                      className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300"
+                    >
+                      {updatingUsername ? 'Updating...' : 'Update Username'}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        setIsEditingUsername(false);
+                        setNewUsername('');
+                      }}
+                      className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-all duration-300"
+                      disabled={updatingUsername}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* Sort Controls */}
           {blogs.length > 0 && (
@@ -126,9 +208,9 @@ export default function ProfilePage() {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-emerald-800 mb-4">No Blogs Yet</h3>
-                                 <p className="text-emerald-600 mb-8 max-w-md mx-auto">
-                   You haven&apos;t posted any blogs yet. Start sharing your thoughts and insights with the community!
-                 </p>
+                <p className="text-emerald-600 mb-8 max-w-md mx-auto">
+                  You haven&apos;t posted any blogs yet. Start sharing your thoughts and insights with the community!
+                </p>
                 <Link 
                   href="/blog/new" 
                   className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 inline-flex items-center gap-2"
@@ -140,57 +222,33 @@ export default function ProfilePage() {
                 </Link>
               </div>
             ) : (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {sortedBlogs.map((post) => (
-                  <div 
-                    key={post.id} 
-                    className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-emerald-100 transition-all duration-300 hover:shadow-xl hover:scale-105 animate-fade-in-up"
-                  >
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold text-emerald-800 mb-3 line-clamp-2">
-                        {post.title}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {sortedBlogs.map((blog) => (
+                  <article key={blog.id} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-emerald-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-semibold text-emerald-800 line-clamp-2">
+                        {blog.title}
                       </h3>
-                      <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                        {post.content.slice(0, 120)}...
-                      </p>
-                      <div className="text-xs text-emerald-500 font-medium mb-4">
-                        Published on {new Date(post.created_at).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-emerald-100">
                       <Link 
-                        href={`/blog/${post.id}`} 
-                        className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors duration-200"
+                        href={`/blog/${blog.id}`}
+                        className="text-emerald-600 hover:text-emerald-700 font-medium text-sm flex items-center gap-1 group"
                       >
-                        Read More →
+                        Read
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </Link>
-                      <div className="flex items-center gap-2">
-                        <Link 
-                          href={`/blog/${post.id}/edit`} 
-                          className="p-2 text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all duration-200"
-                          title="Edit Blog"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </Link>
-                        <Link 
-                          href={`/blog/${post.id}/delete`} 
-                          className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
-                          title="Delete Blog"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </Link>
-                      </div>
                     </div>
-                  </div>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      {blog.content || 'No content available'}
+                    </p>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span>{new Date(blog.created_at).toLocaleDateString()}</span>
+                      <span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs">
+                        {blog.content ? `${blog.content.length} chars` : 'PDF only'}
+                      </span>
+                    </div>
+                  </article>
                 ))}
               </div>
             )}
