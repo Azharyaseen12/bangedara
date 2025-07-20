@@ -163,40 +163,60 @@ function PublicLandingPage() {
                 <h1 className="text-4xl font-bold text-gray-900 mb-6">
                   Welcome to Bangedara
                 </h1>
-                <p className="text-lg text-gray-700 leading-relaxed">
+                <p className="text-lg text-gray-700 leading-relaxed mb-8">
                   Discover and share Islamic knowledge through our vibrant community platform. 
                   Join thousands of users in learning, growing, and connecting with fellow Muslims worldwide.
                 </p>
+                
+                {/* Vision Statement */}
+                <div className="bg-emerald-50 rounded-lg p-6 border-l-4 border-emerald-600">
+                  <h2 className="text-2xl font-bold text-emerald-800 mb-3">Our Vision</h2>
+                  <p className="text-gray-700 leading-relaxed">
+                    To become the leading global platform for Islamic knowledge sharing, fostering a connected Ummah 
+                    where every Muslim can access authentic Islamic education, connect with scholars and fellow believers, 
+                    and contribute to the preservation and propagation of Islamic wisdom for future generations.
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Announcements Section */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl text-center font-bold text-gray-900 mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Announcements
                 </h2>
                 <div className="space-y-4">
-                  <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white">
-                    <h3 className="font-semibold text-gray-900">Seerah Classes</h3>
-                    <p className="text-sm text-gray-600 mt-1">Learn about the life of Prophet Muhammad (PBUH)</p>
-                  </div>
-                  <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white">
-                    <h3 className="font-semibold text-gray-900">Arabic Classes</h3>
-                    <p className="text-sm text-gray-600 mt-1">Master classical and modern Arabic</p>
-                  </div>
-                  <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white">
-                    <h3 className="font-semibold text-gray-900">Psychology Classes</h3>
-                    <p className="text-sm text-gray-600 mt-1">Islamic psychology and mental health</p>
-                  </div>
-                  <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white">
-                    <h3 className="font-semibold text-gray-900">Quran Memorization</h3>
-                    <p className="text-sm text-gray-600 mt-1">Hifz program with expert teachers</p>
-                  </div>
-                  <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white">
-                    <h3 className="font-semibold text-gray-900">Islamic Finance</h3>
-                    <p className="text-sm text-gray-600 mt-1">Understanding halal financial practices</p>
-                  </div>
+                  <Link href="/announcements/seerah-classes" className="block">
+                    <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white hover:bg-emerald-50 transition-colors duration-200 cursor-pointer">
+                      <h3 className="font-semibold text-gray-900">Seerah Classes</h3>
+                      <p className="text-sm text-gray-600 mt-1">Learn about the life of Prophet Muhammad (PBUH)</p>
+                    </div>
+                  </Link>
+                  <Link href="/announcements/arabic-classes" className="block">
+                    <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white hover:bg-emerald-50 transition-colors duration-200 cursor-pointer">
+                      <h3 className="font-semibold text-gray-900">Arabic Classes</h3>
+                      <p className="text-sm text-gray-600 mt-1">Master classical and modern Arabic</p>
+                    </div>
+                  </Link>
+                  <Link href="/announcements/psychology-classes" className="block">
+                    <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white hover:bg-emerald-50 transition-colors duration-200 cursor-pointer">
+                      <h3 className="font-semibold text-gray-900">Psychology Classes</h3>
+                      <p className="text-sm text-gray-600 mt-1">Islamic psychology and mental health</p>
+                    </div>
+                  </Link>
+                  <Link href="/announcements/quran-memorization" className="block">
+                    <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white hover:bg-emerald-50 transition-colors duration-200 cursor-pointer">
+                      <h3 className="font-semibold text-gray-900">Quran Memorization</h3>
+                      <p className="text-sm text-gray-600 mt-1">Hifz program with expert teachers</p>
+                    </div>
+                  </Link>
+                  <Link href="/announcements/islamic-finance" className="block">
+                    <div className="border-2 border-emerald-600 rounded-lg p-4 bg-white hover:bg-emerald-50 transition-colors duration-200 cursor-pointer">
+                      <h3 className="font-semibold text-gray-900">Islamic Finance</h3>
+                      <p className="text-sm text-gray-600 mt-1">Understanding halal financial practices</p>
+                    </div>
+                  </Link>
                 </div>
               </div>
             </div>
