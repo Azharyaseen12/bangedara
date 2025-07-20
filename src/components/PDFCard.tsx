@@ -3,34 +3,80 @@
 import React from 'react';
 import Button from './Button';
 
-interface PDFCardProps {
+interface PDFBook {
+  id: number;
   title: string;
-  description: string;
-  link: string;
+  pdf: string;
+  thumbnail?: string;
+  uploaded_at: string;
 }
 
-const PDFCard: React.FC<PDFCardProps> = ({ title, description, link }) => (
-  <div className="bg-white rounded-2xl shadow-lg p-8 flex flex-col justify-between h-full transition-all duration-300 hover:shadow-xl hover-lift group">
-    <div>
-      <div className="flex items-center mb-4">
-        <div className="text-4xl mr-4">📄</div>
-        <div className="flex-1">
-          <h3 className="text-xl font-semibold text-emerald-800 mb-3 group-hover:text-emerald-600 transition-colors">{title}</h3>
+interface PDFCardProps {
+  book: PDFBook;
+}
+
+export default function PDFCard({ book }: PDFCardProps) {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  
+  const handleViewPDF = () => {
+    window.open(`${API_BASE_URL}${book.pdf}`, '_blank');
+  };
+
+  const handleDownloadPDF = () => {
+    const link = document.createElement('a');
+    link.href = `${API_BASE_URL}${book.pdf}`;
+    link.download = book.title.replace(/[^a-zA-Z0-9]/g, '_') + '.pdf';
+    link.click();
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      {/* Thumbnail */}
+      <div className="aspect-[3/4] bg-gray-100 flex items-center justify-center">
+        {book.thumbnail ? (
+          <img
+            src={`${book.thumbnail}`}
+            alt={book.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Hide the image and show the default icon when image fails to load
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        <div className={`text-gray-400 ${book.thumbnail ? 'hidden' : ''} w-full h-full flex items-center justify-center`}>
+          <img 
+            src="/PDF.png" 
+            alt="PDF Icon" 
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
-      <p className="text-gray-600 mb-6 leading-relaxed">{description}</p>
+      
+      {/* Content */}
+      <div className="p-4">
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{book.title}</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Uploaded {new Date(book.uploaded_at).toLocaleDateString()}
+        </p>
+        
+        <div className="flex gap-2">
+          <Button
+            onClick={handleViewPDF}
+            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-sm"
+          >
+            View PDF
+          </Button>
+          <Button
+            onClick={handleDownloadPDF}
+            variant="ghost"
+            className="text-emerald-600 hover:text-emerald-700 text-sm"
+          >
+            Download
+          </Button>
+        </div>
+      </div>
     </div>
-    <div className="mt-auto">
-      <Button as="a" href={link} className="w-full bg-emerald-600 hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg">
-        <span className="flex items-center justify-center">
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Read / Download
-        </span>
-      </Button>
-    </div>
-  </div>
-);
-
-export default PDFCard; 
+  );
+} 

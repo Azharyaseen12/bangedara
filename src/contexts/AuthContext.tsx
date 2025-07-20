@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 interface UserType {
   username: string;
+  is_staff?: boolean;
 }
 
 interface AuthContextType {
