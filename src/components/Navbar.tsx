@@ -1,41 +1,23 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Button from './Button';
 import { useAuth } from '../contexts/AuthContext';
-import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const { token, user, logout } = useAuth();
-  const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (pathname !== '/') {
-      setIsScrolled(true);
-      return;
-    }
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [pathname]);
 
   const navigation = [
     { name: 'Home', href: '/' },
+    { name: 'Services', href: '/services' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
     { name: 'FAQs', href: '/faqs' },
   ];
   
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-lg' 
-        : 'bg-transparent'
-    }`}>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
@@ -43,9 +25,7 @@ export default function Navbar() {
             <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">ب</span>
             </div>
-            <span className={`font-bold text-xl md:text-2xl transition-colors duration-300 ${
-              isScrolled ? 'text-gray-900' : 'text-white'
-            }`}>
+            <span className="font-bold text-xl md:text-2xl text-gray-900">
               Bangedara
             </span>
           </Link>
@@ -55,9 +35,7 @@ export default function Navbar() {
             <Link
               key="Blog"
               href="/blog"
-              className={`font-medium transition-colors duration-200 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500
-                ${isScrolled ? 'text-emerald-700 hover:text-white hover:bg-emerald-600' : 'text-white hover:text-emerald-200'}
-              `}
+              className="font-medium transition-colors duration-200 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-emerald-700 hover:text-white hover:bg-emerald-600"
             >
               Blog
             </Link>
@@ -65,9 +43,7 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`font-medium transition-colors duration-200 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500
-                  ${isScrolled ? 'text-emerald-700 hover:text-white hover:bg-emerald-600' : 'text-white hover:text-emerald-200'}
-                `}
+                className="font-medium transition-colors duration-200 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-500 text-emerald-700 hover:text-white hover:bg-emerald-600"
               >
                 {item.name}
               </Link>
@@ -79,7 +55,7 @@ export default function Navbar() {
             {token && user ? (
               <>
                 <Link href="/profile">
-                  <Button variant="ghost" size="md" className={isScrolled ? 'text-emerald-700 hover:text-white hover:bg-emerald-600' : 'text-white hover:text-emerald-200'}>
+                  <Button variant="ghost" size="md" className="text-emerald-700 hover:text-white hover:bg-emerald-600">
                     {user.username || 'Profile'}
                   </Button>
                 </Link>
@@ -93,7 +69,7 @@ export default function Navbar() {
                   <Button 
                     variant="ghost" 
                     size="md"
-                    className={isScrolled ? 'text-emerald-700 hover:text-white hover:bg-emerald-600' : 'text-white hover:text-emerald-200'}
+                    className="text-emerald-700 hover:text-white hover:bg-emerald-600"
                   >
                     Login
                   </Button>
