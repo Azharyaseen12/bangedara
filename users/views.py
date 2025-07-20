@@ -2,9 +2,9 @@ from django.shortcuts import render
 from rest_framework import generics, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer, BlogSerializer, ContactMessageSerializer, CommentSerializer, ReplySerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, BlogSerializer, ContactMessageSerializer, CommentSerializer, ReplySerializer, UserProfileSerializer, PDFBookSerializer
 from django.contrib.auth.models import User
-from .models import Blog, ContactMessage, Comment, Reply
+from .models import Blog, ContactMessage, Comment, Reply, PDFBook
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -102,3 +102,29 @@ class ReplyListCreateView(generics.ListCreateAPIView):
             return Response(serializer.errors, status=400)
         self.perform_create(serializer)
         return Response(serializer.data, status=201)
+
+class IsAdminUser(permissions.BasePermission):
+    """
+    Custom permission to only allow admin users to create/update/delete PDF books.
+    """
+    def has_permission(self, request, view):
+        # Allow anyone to view (public access)
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        # Only allow admin users to create/update/delete
+        return request.user.is_authenticated and request.user.is_staff
+
+class PDFBookViewSet(viewsets.ModelViewSet):
+    queryset = PDFBook.objects.all().order_by('-uploaded_at')
+    serializer_class = PDFBookSerializer
+    permission_classes = [IsAdminUser]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_queryset(self):
+        queryset = PDFBook.objects.all().order_by('-uploaded_at')
+        search_query = self.request.query_params.get('search', None)
+        
+        if search_query:
+            queryset = queryset.filter(title__icontains=search_query)
+            
+        return queryset

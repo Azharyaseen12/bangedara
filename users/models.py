@@ -80,3 +80,12 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} <{self.email}>"
+
+class PDFBook(models.Model):
+    title = models.CharField(max_length=255)
+    pdf = models.FileField(upload_to='pdf_books/')
+    thumbnail = models.ImageField(upload_to='pdf_thumbnails/', blank=True, null=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

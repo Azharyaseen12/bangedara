@@ -1,11 +1,12 @@
 from django.urls import path, include
-from .views import RegisterView, ContactMessageCreateView, CommentListCreateView, ReplyListCreateView, UserProfileView
+from .views import RegisterView, ContactMessageCreateView, CommentListCreateView, ReplyListCreateView, UserProfileView, PDFBookViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.routers import DefaultRouter
 from .views import BlogViewSet
 
 router = DefaultRouter()
 router.register(r'blogs', BlogViewSet, basename='blog')
+router.register(r'pdf-books', PDFBookViewSet, basename='pdfbook')
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),

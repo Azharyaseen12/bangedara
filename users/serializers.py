@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Blog, ContactMessage, Comment, Reply
+from .models import Blog, ContactMessage, Comment, Reply, PDFBook
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
@@ -61,4 +61,10 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'blog', 'user', 'user_username', 'content', 'created_at', 'replies']
-        read_only_fields = ['id', 'user', 'user_username', 'created_at', 'replies', 'blog'] 
+        read_only_fields = ['id', 'user', 'user_username', 'created_at', 'replies', 'blog']
+
+class PDFBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PDFBook
+        fields = ['id', 'title', 'pdf', 'thumbnail', 'uploaded_at']
+        read_only_fields = ['uploaded_at'] 
